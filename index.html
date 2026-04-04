@@ -890,13 +890,70 @@ var _osusumeSpot=null;
 var _osusumeGroup='';
 var _osusumeArea='';
 function initOsusume(){
+  var today=new Date();
+  var month=today.getMonth()+1;
+  var day=today.getDate();
+
+  // ===== 季節定義 =====
+  var season = month<=2||month===12 ? 'winter'
+             : month<=5 ? 'spring'
+             : month<=8 ? 'summer' : 'autumn';
+
+  // ===== 月別イベント・旬キーワード =====
+  // スポット名・説明文に含まれると高スコア
+  var MONTHLY_HOT = {
+    1:  ['梅','初日の出','初詣','温泉','来宮','梅園','正月'],
+    2:  ['梅','桜','河津','みなみの桜','菜の花','梅まつり','バレンタイン'],
+    3:  ['桜','梅','春','お花見','修禅寺','MOA','ひな祭り'],
+    4:  ['桜','花','春','新緑','五月祭','城ヶ崎','大室山'],
+    5:  ['新緑','五月祭','アジサイ','伊豆高原','黄金崎','連休'],
+    6:  ['アジサイ','紫陽花','初夏','堂ヶ島','浄蓮','雨'],
+    7:  ['海','海水浴','花火','夏','ビーチ','白浜','弓ヶ浜'],
+    8:  ['海','夏','花火','海水浴','祭り','盆','ヒリゾ'],
+    9:  ['秋','紅葉','秋刀魚','海','浜','体験'],
+    10: ['紅葉','秋','もみじ','修善寺','天城','芋','きのこ'],
+    11: ['紅葉','もみじ','秋','修善寺','天城','温泉','浄蓮'],
+    12: ['イルミ','温泉','忘年','年末','グランイルミ','冬','鍋'],
+  };
+
+  // ===== 人気・話題スポット名リスト（固定高スコア） =====
+  var POPULAR_SPOTS = [
+    // 東伊豆
+    '熱海城','MOA美術館','来宮神社','熱海サンビーチ','熱海梅園',
+    '大室山','城ヶ崎','城ケ崎','伊豆ぐらんぱる','伊豆シャボテン',
+    // 中伊豆
+    '修禅寺','竹林の小径','浄蓮の滝','韮山反射炉','伊豆の国パノラマパーク',
+    '修善寺虹の郷','旧天城トンネル','筏場のわさび田',
+    // 南伊豆
+    '石廊崎','下田海中水族館','白浜','ペリーロード','龍宮窟','ヒリゾ浜',
+    '寝姿山','弓ヶ浜',
+    // 西伊豆
+    '堂ヶ島','堂ヶ島天窓洞','沢田公園','黄金崎','土肥金山','戸田',
+  ];
+
+  // ===== 季節相性マップ =====
+  // 季節×スポット種別で加点
+  var SEASON_MATCH = {
+    spring: ['桜','梅','花','春','新緑','お花見','ハイキング','城ヶ崎','修善寺','河津','大室山'],
+    summer: ['海','ビーチ','海水浴','マリン','花火','夏','白浜','弓ヶ浜','ヒリゾ','熱海サンビーチ'],
+    autumn: ['紅葉','もみじ','秋','天城','修善寺','浄蓮','温泉','芋'],
+    winter: ['温泉','梅','イルミ','来宮','梅園','鍋','熱海','グランイルミ','沢田'],
+  };
+
+  // ===== 全スポット収集 =====
   var all=[];
   var groups=['東伊豆','中伊豆','南伊豆','西伊豆'];
-  var cats=['遊ぶ','休む','食う'];
+  var cats=['遊ぶ','休む','食う','寝る'];
   groups.forEach(function(g){
     cats.forEach(function(c){
+      if(c==='寝る') return; // 宿泊は除外
       (D[g]&&D[g][c]||[]).forEach(function(s){
-        if(s.d&&s.d.length>20) all.push({s:s,g:g,c:c});
+        if(!s.d||s.d.length<15) return;
+        // コンビニ・チェーン店は除外
+        var chains=['セブン','ファミリーマート','ローソン','マクドナルド',
+          'マックスバリュ','吉野家','すき家','ガスト','ジョナサン','業務スーパー'];
+        if(chains.some(function(k){return s.n.indexOf(k)>=0;})) return;
+        all.push({s:s,g:g,c:c,score:0});
       });
     });
   });
@@ -905,19 +962,61 @@ function initOsusume(){
     if(wrap) wrap.style.display='none';
     return;
   }
-  var today=new Date();
-  var seed=today.getFullYear()*10000+(today.getMonth()+1)*100+today.getDate();
-  var idx=(seed*7919)%all.length;
-  var pick=all[idx];
+
+  // ===== スコアリング =====
+  var hotWords = MONTHLY_HOT[month]||[];
+  var seasonWords = SEASON_MATCH[season]||[];
+
+  all.forEach(function(item){
+    var name=item.s.n; var desc=item.s.d||''; var score=0;
+
+    // 1) 人気スポット +50
+    if(POPULAR_SPOTS.some(function(k){return name.indexOf(k)>=0;})) score+=50;
+
+    // 2) 月別旬キーワード +30/件
+    hotWords.forEach(function(k){
+      if(name.indexOf(k)>=0||desc.indexOf(k)>=0) score+=30;
+    });
+
+    // 3) 季節相性 +20/件
+    seasonWords.forEach(function(k){
+      if(name.indexOf(k)>=0||desc.indexOf(k)>=0) score+=20;
+    });
+
+    // 4) 「遊ぶ」カテゴリ優先（観光らしさ） +10
+    if(item.c==='遊ぶ') score+=10;
+
+    // 5) 説明文が充実 +5
+    if(desc.length>50) score+=5;
+
+    item.score=score;
+  });
+
+  // ===== 上位候補から日付ベースで選択 =====
+  // 上位30%に絞って毎日ローテーション
+  all.sort(function(a,b){return b.score-a.score;});
+  var topCount=Math.max(10, Math.floor(all.length*0.3));
+  var topSpots=all.slice(0,topCount);
+
+  var seed=today.getFullYear()*10000+month*100+day;
+  var idx=(seed*7919)%topSpots.length;
+  var pick=topSpots[idx];
+
   _osusumeSpot=pick.s;
   _osusumeGroup=pick.g;
   _osusumeArea=pick.c;
+
+  // バッジ（季節ラベル）
+  var seasonLabel={spring:'🌸 春のおすすめ',summer:'🌊 夏のおすすめ',autumn:'🍂 秋のおすすめ',winter:'❄️ 冬のおすすめ'};
+
   var nameEl=document.getElementById('osusume-name');
   var descEl=document.getElementById('osusume-desc');
   var areaEl=document.getElementById('osusume-area');
+  var labelEl=document.getElementById('osusume-label');
   if(nameEl) nameEl.textContent=pick.s.n;
   if(descEl) descEl.textContent=pick.s.d;
   if(areaEl) areaEl.textContent=pick.g+' ／ '+pick.c;
+  if(labelEl) labelEl.textContent=seasonLabel[season]+' ✨ 今日のおすすめ';
 }
 
 function openOsusume(){
