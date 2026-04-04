@@ -733,6 +733,9 @@ function swipe(id,fn){
 }
 swipe('subarea-screen',function(){goBack('top');});
 swipe('fav-screen',function(){closeFav();});
+// おすすめ・バッジ初期化
+initOsusume();
+updateFavBadge();
 swipe('cat-screen',function(){catBack();});
 swipe('det-screen',function(){goBack('cat-screen');});
 
@@ -878,8 +881,7 @@ function removeFavAndRefresh(key){
   saveFavs(favs);
   renderFavList();
 }
-// 初期化
-updateFavBadge();
+// 初期化完了
 
 // ============================================================
 // ⑥ 今日のおすすめ
@@ -887,8 +889,7 @@ updateFavBadge();
 var _osusumeSpot=null;
 var _osusumeGroup='';
 var _osusumeArea='';
-(function initOsusume(){
-  // 全スポットから日付ベースでランダム選択（毎日変わる）
+function initOsusume(){
   var all=[];
   var groups=['東伊豆','中伊豆','南伊豆','西伊豆'];
   var cats=['遊ぶ','休む','食う'];
@@ -899,7 +900,11 @@ var _osusumeArea='';
       });
     });
   });
-  if(!all.length) return;
+  if(!all.length){
+    var wrap=document.getElementById('osusume-wrap');
+    if(wrap) wrap.style.display='none';
+    return;
+  }
   var today=new Date();
   var seed=today.getFullYear()*10000+(today.getMonth()+1)*100+today.getDate();
   var idx=(seed*7919)%all.length;
@@ -907,10 +912,13 @@ var _osusumeArea='';
   _osusumeSpot=pick.s;
   _osusumeGroup=pick.g;
   _osusumeArea=pick.c;
-  document.getElementById('osusume-name').textContent=pick.s.n;
-  document.getElementById('osusume-desc').textContent=pick.s.d;
-  document.getElementById('osusume-area').textContent=pick.g+' ／ '+pick.c;
-})();
+  var nameEl=document.getElementById('osusume-name');
+  var descEl=document.getElementById('osusume-desc');
+  var areaEl=document.getElementById('osusume-area');
+  if(nameEl) nameEl.textContent=pick.s.n;
+  if(descEl) descEl.textContent=pick.s.d;
+  if(areaEl) areaEl.textContent=pick.g+' ／ '+pick.c;
+}
 
 function openOsusume(){
   if(!_osusumeSpot) return;
