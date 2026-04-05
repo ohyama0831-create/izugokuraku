@@ -739,7 +739,7 @@ function swipe(id,fn){
   el.addEventListener('touchend',function(e){if(e.changedTouches[0].clientX-tx0>70&&tx0<70)fn();},{passive:true});
 }
 // ============================
-// 伊豆の最新情報
+// 伊豆の最新情報（window登録）
 // ============================
 var NEWS_DATA = {
   4:[
@@ -747,96 +747,95 @@ var NEWS_DATA = {
       color:'#e84c8b',
       tag:'🌸 花見',tagCss:'background:#fce8f0;color:#c04080;',
       name:'伊豆高原さくらの里 桜まつり',
-      desc:'40種1,000本の桜が咲き誇る絶景スポット。伊東最大の花見イベント、見頃継続中！',
+      desc:'40種1,000本の桜が咲き誇る絶景。伊東最大の花見イベント、見頃継続中！',
       date:'📅 〜4月中旬（見頃継続中）',
       place:'📍 静岡県伊東市富戸1317-13',
       addr:'静岡県伊東市富戸1317-13',
-      url:'https://itospa.com/spot/detail_50030.html',
+      url:'https://itospa.com/spot/detail_50030.html'
     },
     {
       color:'#3a7bd5',
       tag:'🎨 アート',tagCss:'background:#e8f0fc;color:#2050c0;',
       name:'伊豆高原五月祭（4/29〜開幕）',
-      desc:'伊豆最大のアートフェス。100以上のギャラリー・カフェ・アトリエが会場に。今から計画を。',
+      desc:'伊豆最大のアートフェス。100以上のギャラリー・カフェ・アトリエが会場に。',
       date:'📅 4月29日(水・祝)〜5月31日(日)',
       place:'📍 静岡県伊東市 伊豆高原エリア一帯',
       addr:'静岡県伊東市八幡野1151',
-      url:'https://izukougen-gogatsusai.art/',
+      url:'https://izukougen-gogatsusai.art/'
     },
     {
       color:'#e85d20',
       tag:'🎉 お祭り',tagCss:'background:#fff0e8;color:#c04010;',
       name:'松崎さくら祭り・夜桜ライトアップ',
-      desc:'桜並木のライトアップ＋フラメンコギターライブ。桜葉おしるこ無料サービスが人気。',
+      desc:'桜並木のライトアップ＋フラメンコギターライブ。桜葉おしるこ無料サービス！',
       date:'📅 4月4日(土)〜4月11日(土)',
       place:'📍 静岡県賀茂郡松崎町 道の駅花の三聖苑',
       addr:'静岡県賀茂郡松崎町松崎',
-      url:'https://b-izu.com/event/post-26019/',
-    },
+      url:'https://b-izu.com/event/post-26019/'
+    }
   ],
   5:[
     {
       color:'#3a7bd5',
       tag:'🎨 アート',tagCss:'background:#e8f0fc;color:#2050c0;',
       name:'伊豆高原五月祭（開催中）',
-      desc:'100以上の会場でギャラリー・体験イベント開催中。伊豆の春の最大アートフェス！',
+      desc:'100以上の会場でギャラリー・体験イベント開催中！伊豆の春の最大アートフェス。',
       date:'📅 4月29日(水・祝)〜5月31日(日)',
       place:'📍 静岡県伊東市 伊豆高原エリア一帯',
       addr:'静岡県伊東市八幡野1151',
-      url:'https://izukougen-gogatsusai.art/',
+      url:'https://izukougen-gogatsusai.art/'
     },
     {
       color:'#e85d20',
       tag:'🎉 お祭り',tagCss:'background:#fff0e8;color:#c04010;',
       name:'黒船祭（下田市最大イベント）',
-      desc:'ペリー来航を記念した国際交流イベント。海上花火・米海軍パレード・フラショーが豪華！',
+      desc:'ペリー来航を記念した国際交流イベント。海上花火・米海軍パレードが豪華！',
       date:'📅 5月16日(金)〜18日(日)',
       place:'📍 静岡県下田市 下田港周辺',
       addr:'静岡県下田市',
-      url:'https://www.shimoda-city.info/kurohune/',
+      url:'https://www.shimoda-city.info/'
     },
     {
       color:'#1e9e5a',
       tag:'🌺 自然',tagCss:'background:#e6f4ec;color:#1e6840;',
       name:'姫の沢公園 つつじ・こいのぼりまつり',
-      desc:'60,000株のツツジが咲き誇る。150匹のこいのぼり＋ミニ電車体験が家族に大人気！',
+      desc:'60,000株のツツジ＋150匹のこいのぼり。ミニ電車体験が家族に大人気！',
       date:'📅 4月18日(土)〜5月6日(水)',
       place:'📍 静岡県熱海市熱海1993',
       addr:'静岡県熱海市熱海1993',
-      url:'https://www.city.atami.lg.jp/',
-    },
-  ],
+      url:'https://www.city.atami.lg.jp/'
+    }
+  ]
 };
 
-// 月別デフォルト（データがない月は4月を表示）
-var newsOpen = false;
+window._newsOpen = false;
 
-function toggleNews(){
-  newsOpen = !newsOpen;
+window.toggleNews = function(){
+  window._newsOpen = !window._newsOpen;
   var panel = document.getElementById('news-panel');
   var arr   = document.getElementById('news-arr');
-  if(newsOpen){
-    buildNewsPanel();
+  if(window._newsOpen){
+    window.buildNewsPanel();
     panel.classList.add('show');
-    arr.style.transform = 'rotate(90deg)';
-    // パネルにスクロール
+    if(arr) arr.style.transform = 'rotate(90deg)';
     setTimeout(function(){
       panel.scrollIntoView({behavior:'smooth',block:'nearest'});
     },100);
   } else {
     panel.classList.remove('show');
-    arr.style.transform = '';
+    if(arr) arr.style.transform = '';
   }
-}
+};
 
-function buildNewsPanel(){
+window.buildNewsPanel = function(){
   var m = new Date().getMonth()+1;
   var items = NEWS_DATA[m] || NEWS_DATA[4];
-  var html = '';
+  var h = '';
   items.forEach(function(ev){
     var mapUrl = 'https://maps.google.com/maps?daddr='+encodeURIComponent(ev.addr)+'&dirflg=d';
-    html +=
-      '<div class="ncard" onclick="openNewsUrl(''+ev.url+'')">'+
+    h +=
+      '<div class="ncard" onclick="window.openNewsUrl(this)"'
+      +' data-url="'+ev.url+'">'+
         '<div class="ncard-accent" style="background:'+ev.color+'"></div>'+
         '<div class="ncard-body">'+
           '<div class="ncard-header">'+
@@ -857,12 +856,13 @@ function buildNewsPanel(){
         '</div>'+
       '</div>';
   });
-  document.getElementById('news-panel').innerHTML = html;
-}
+  document.getElementById('news-panel').innerHTML = h;
+};
 
-function openNewsUrl(url){
-  window.open(url,'_blank');
-}
+window.openNewsUrl = function(el){
+  var url = el.getAttribute('data-url');
+  if(url) window.open(url,'_blank');
+};
 
 swipe('subarea-screen',function(){goBack('top');});
 swipe('cat-screen',function(){catBack();});
