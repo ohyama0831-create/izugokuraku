@@ -70,6 +70,59 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
 #wave{flex-shrink:0;height:38px;background:var(--cream);margin-top:-2px;clip-path:ellipse(55% 100% at 50% 100%);}
 #area-section{flex:1;overflow-y:auto;padding:8px 16px 24px;
   padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+/* イベントバナーボタン */
+#event-banner{margin:0 0 12px;border-radius:var(--r);overflow:hidden;cursor:pointer;
+  background:linear-gradient(135deg,#0d1b3e 0%,#1a3566 100%);
+  padding:13px 16px;display:flex;align-items:center;gap:12px;
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 4px 16px rgba(13,27,62,0.35);}
+#event-banner:active{opacity:0.85;}
+.event-banner-icon{font-size:28px;flex-shrink:0;}
+.event-banner-text{flex:1;}
+.event-banner-title{font-size:14px;font-weight:800;color:#fff;letter-spacing:0.04em;}
+.event-banner-sub{font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px;}
+.event-banner-arr{font-size:18px;color:rgba(255,255,255,0.4);}
+/* イベントパネル */
+#event-panel{display:none;margin:0 0 14px;border-radius:var(--r);overflow:hidden;
+  background:var(--white);border:1px solid var(--cream3);
+  box-shadow:0 4px 16px rgba(0,0,0,0.08);}
+#event-panel.show{display:block;}
+#event-panel-hdr{padding:12px 16px;background:linear-gradient(135deg,#0d1b3e,#1a3566);
+  display:flex;align-items:center;justify-content:space-between;}
+#event-panel-hdr-title{font-size:13px;font-weight:800;color:#fff;}
+#event-panel-close{font-size:18px;color:rgba(255,255,255,0.6);cursor:pointer;padding:2px 6px;}
+#event-list{padding:8px;}
+.ecard{border-radius:12px;border:1px solid var(--cream3);margin-bottom:8px;
+  overflow:hidden;cursor:pointer;transition:transform 0.15s;position:relative;
+  background:var(--white);}
+.ecard:last-child{margin-bottom:0;}
+.ecard:active{transform:scale(0.98);}
+.ecard-inner{padding:12px 14px;padding-right:50px;}
+.ecard-rank{position:absolute;top:10px;left:10px;width:22px;height:22px;border-radius:50%;
+  background:var(--red);color:#fff;font-size:10px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;}
+.ecard-rank.top1{background:#E8A020;}
+.ecard-rank.top2{background:#9E9E9E;}
+.ecard-rank.top3{background:#C07838;}
+.ecard-body{margin-left:28px;}
+.ecard-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;
+  font-weight:700;padding:2px 7px;border-radius:8px;margin-bottom:5px;}
+.ecard-tag.hanami{background:#fce8f0;color:#c04080;}
+.ecard-tag.matsuri{background:#fff3e0;color:#e06000;}
+.ecard-tag.art{background:#e8f0fc;color:#2050c0;}
+.ecard-tag.shizen{background:#e6f4ec;color:#1e6840;}
+.ecard-tag.taiken{background:#f0e8fc;color:#6020c0;}
+.ecard-name{font-size:14px;font-weight:800;color:var(--text);line-height:1.3;}
+.ecard-date{font-size:11px;color:var(--muted);margin-top:3px;}
+.ecard-area{font-size:10px;color:var(--lmuted);margin-top:2px;}
+.ecard-mapbtn{position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:32px;height:32px;border-radius:9px;background:#e6f4ec;
+  border:1px solid rgba(30,104,64,0.25);
+  display:flex;align-items:center;justify-content:center;font-size:15px;}
+#event-loading{padding:24px;text-align:center;color:var(--muted);font-size:13px;}
+#event-footer{padding:10px 14px;border-top:1px solid var(--cream3);
+  text-align:center;font-size:11px;color:var(--muted);}
+#event-footer a{color:var(--red);font-weight:700;text-decoration:none;}
 #area-label{text-align:center;font-size:14px;color:var(--muted);letter-spacing:0.12em;margin-bottom:14px;font-family:"Noto Serif JP",serif;}
 #area-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:360px;margin:0 auto;}
 .acard{background:var(--white);border-radius:var(--r);padding:18px 16px 16px;text-align:center;
@@ -192,6 +245,24 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
   </div>
   <div id="wave"></div>
   <div id="area-section">
+    <!-- イベント情報バナー -->
+    <div id="event-banner" onclick="toggleEventPanel()">
+      <div class="event-banner-icon">🎪</div>
+      <div class="event-banner-text">
+        <div class="event-banner-title" id="event-banner-title">今月の伊豆 人気イベント情報</div>
+        <div class="event-banner-sub" id="event-banner-sub">最新情報を読み込む → タップ</div>
+      </div>
+      <div class="event-banner-arr">›</div>
+    </div>
+    <!-- イベントパネル（タップで展開） -->
+    <div id="event-panel">
+      <div id="event-panel-hdr">
+        <div id="event-panel-hdr-title">🎪 伊豆の人気イベント</div>
+        <div id="event-panel-close" onclick="event.stopPropagation();closeEventPanel()">✕</div>
+      </div>
+      <div id="event-list"><div id="event-loading">読み込み中...</div></div>
+      <div id="event-footer">情報提供: <a href="https://b-izu.com/event/" target="_blank">美伊豆 B-Izu</a> / <a href="https://izu-navi.com/event/" target="_blank">伊豆ナビ</a></div>
+    </div>
     <div id="area-label">どのエリアへ行きますか？</div>
     <div id="area-grid"></div>
   </div>
@@ -673,6 +744,154 @@ function swipe(id,fn){
   el.addEventListener('touchstart',function(e){tx0=e.touches[0].clientX;},{passive:true});
   el.addEventListener('touchend',function(e){if(e.changedTouches[0].clientX-tx0>70&&tx0<70)fn();},{passive:true});
 }
+// ===== イベント情報 =====
+// 月別イベントデータ（人気順）
+var IZU_EVENTS = {
+  4: [
+    {
+      rank:1, name:'🌸 伊豆高原さくらの里 桜まつり',
+      tag:'hanami', tagName:'🌸 花見',
+      date:'3月下旬〜4月中旬（見頃継続中）',
+      area:'東伊豆・伊豆高原', addr:'静岡県伊東市富戸1317-13',
+      desc:'40種1000本の桜が咲き誇る絶景花見スポット。伊豆高原の春の風物詩。',
+      url:'https://itospa.com/spot/detail_50030.html',
+    },
+    {
+      rank:2, name:'🌸 熱海城 桜まつり',
+      tag:'hanami', tagName:'🌸 花見',
+      date:'3月下旬〜4月上旬',
+      area:'東伊豆・熱海', addr:'静岡県熱海市曽我山390-1',
+      desc:'熱海湾を望む高台で、ソメイヨシノが満開。眺望抜群の絶景花見。',
+      url:'https://www.atamijo.com/',
+    },
+    {
+      rank:3, name:'🎨 伊豆高原五月祭（開幕準備）',
+      tag:'art', tagName:'🎨 アート',
+      date:'4月29日〜5月31日（GW直前）',
+      area:'東伊豆・伊豆高原', addr:'静岡県伊東市八幡野1151',
+      desc:'伊豆高原一帯のギャラリー・カフェ・アトリエが会場に。芸術の春を体感。',
+      url:'https://izukougen-gogatsusai.art/',
+    },
+    {
+      rank:4, name:'🌸 松崎さくら祭り・ライトアップ',
+      tag:'hanami', tagName:'🌸 花見',
+      date:'4月4日（土）12:00〜20:00',
+      area:'西伊豆・松崎', addr:'静岡県賀茂郡松崎町松崎(道の駅花の三聖苑)',
+      desc:'桜並木のライトアップ＋フラメンコギターライブ。桜葉おしるこ無料サービスも。',
+      url:'https://b-izu.com/event/post-26019/',
+    },
+    {
+      rank:5, name:'🌸 しだれ桃の里まつり（下田）',
+      tag:'hanami', tagName:'🌸 花見',
+      date:'3月21日〜4月8日',
+      area:'南伊豆・下田', addr:'静岡県下田市蓮台寺',
+      desc:'蓮台寺温泉の桃源郷で春爛漫。日本一118段のひな飾りも登場。',
+      url:'https://b-izu.com/event/post-26019/',
+    },
+  ],
+  5: [
+    {
+      rank:1, name:'🎨 伊豆高原五月祭',
+      tag:'art', tagName:'🎨 アート',
+      date:'4月29日〜5月31日',
+      area:'東伊豆・伊豆高原', addr:'静岡県伊東市八幡野1151',
+      desc:'伊豆最大のアートフェス。100以上の会場でギャラリー・体験イベント開催。',
+      url:'https://izukougen-gogatsusai.art/',
+    },
+    {
+      rank:2, name:'🍺 春のあたみビール祭り',
+      tag:'matsuri', tagName:'🍺 お祭り',
+      date:'5月3日〜5月5日',
+      area:'東伊豆・熱海', addr:'静岡県熱海市(熱海海岸周辺)',
+      desc:'海を眺めながらクラフトビールと地元グルメ。音楽・ダンスパフォーマンスも。',
+      url:'https://b-izu.com/event/',
+    },
+    {
+      rank:3, name:'🌺 姫の沢公園 つつじ・こいのぼりまつり',
+      tag:'shizen', tagName:'🌿 自然',
+      date:'4月18日〜5月6日',
+      area:'東伊豆・熱海', addr:'静岡県熱海市熱海1993',
+      desc:'60,000株のツツジが咲き誇る。150匹のこいのぼり＋ミニ電車体験が大人気。',
+      url:'https://b-izu.com/event/',
+    },
+    {
+      rank:4, name:'🐟 黒船祭（下田）',
+      tag:'matsuri', tagName:'🎉 お祭り',
+      date:'5月中旬（毎年恒例）',
+      area:'南伊豆・下田', addr:'静岡県下田市',
+      desc:'ペリー来航を記念した国際交流イベント。海上花火大会＆フラショーが見どころ。',
+      url:'https://www.shimoda-city.info/',
+    },
+    {
+      rank:5, name:'🌿 稲取細野高原 山菜狩り',
+      tag:'taiken', tagName:'🎯 体験',
+      date:'5月上旬〜中旬',
+      area:'東伊豆', addr:'静岡県賀茂郡東伊豆町稲取',
+      desc:'125ヘクタールの高原でワラビ・ゼンマイ狩り。春の伊豆の自然を満喫。',
+      url:'https://izu-navi.com/event-categorys/may/',
+    },
+  ],
+};
+
+var eventPanelOpen = false;
+var eventLoaded = false;
+
+function toggleEventPanel(){
+  if(eventPanelOpen){
+    closeEventPanel();
+  } else {
+    openEventPanel();
+  }
+}
+
+function openEventPanel(){
+  var panel = document.getElementById('event-panel');
+  panel.classList.add('show');
+  eventPanelOpen = true;
+  document.getElementById('event-banner-arr') && (document.querySelector('.event-banner-arr').textContent = '∨');
+  if(!eventLoaded) loadEvents();
+}
+
+function closeEventPanel(){
+  var panel = document.getElementById('event-panel');
+  panel.classList.remove('show');
+  eventPanelOpen = false;
+  document.querySelector('.event-banner-arr').textContent = '›';
+}
+
+function loadEvents(){
+  eventLoaded = true;
+  var month = new Date().getMonth() + 1;
+  var events = IZU_EVENTS[month] || IZU_EVENTS[4];
+  var listEl = document.getElementById('event-list');
+  var bannerSub = document.getElementById('event-banner-sub');
+  bannerSub.textContent = month + '月の人気イベント ' + events.length + '件';
+
+  var html = '';
+  events.forEach(function(ev){
+    var rankClass = ev.rank===1?'top1':ev.rank===2?'top2':ev.rank===3?'top3':'';
+    var mapUrl = 'https://maps.google.com/maps?daddr=' + encodeURIComponent(ev.addr) + '&dirflg=d';
+    html += '<div class="ecard" onclick="openEventUrl('' + ev.url + '')">' +
+      '<div class="ecard-inner">' +
+        '<div class="ecard-rank ' + rankClass + '">' + ev.rank + '</div>' +
+        '<div class="ecard-body">' +
+          '<div class="ecard-tag ' + ev.tag + '">' + ev.tagName + '</div>' +
+          '<div class="ecard-name">' + ev.name + '</div>' +
+          '<div class="ecard-date">📅 ' + ev.date + '</div>' +
+          '<div class="ecard-area">📍 ' + ev.area + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<a class="ecard-mapbtn" href="' + mapUrl + '" target="_blank" onclick="event.stopPropagation()">🗺️</a>' +
+    '</div>';
+  });
+
+  listEl.innerHTML = html;
+}
+
+function openEventUrl(url){
+  window.open(url, '_blank');
+}
+
 swipe('subarea-screen',function(){goBack('top');});
 swipe('cat-screen',function(){catBack();});
 swipe('det-screen',function(){goBack('cat-screen');});
