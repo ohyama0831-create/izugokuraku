@@ -211,6 +211,14 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
   border:1px solid rgba(30,104,64,0.3);color:var(--play);font-size:15px;
   display:flex;align-items:center;justify-content:center;text-decoration:none;}
 .mlink:active{background:#cde5d8;}
+.weblink{position:absolute;right:48px;top:50%;transform:translateY(-50%);
+  height:28px;padding:0 9px;border-radius:8px;
+  background:#eef2ff;border:1px solid rgba(32,80,192,0.22);
+  color:#2050c0;font-size:10px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;white-space:nowrap;}
+.weblink:active{opacity:0.7;}
+.card[data-c="寝る"] .cname{padding-right:125px;}
 #empty{display:none;flex-direction:column;align-items:center;padding:50px 20px;text-align:center;}
 #empty.show{display:flex;}
 .eico{font-size:44px;margin-bottom:12px;}
@@ -606,7 +614,7 @@ var GEO=[
   {k:['熱海'],lat:35.0961,lon:139.0706},
   {k:['伊東'],lat:34.9693,lon:139.0998},
   {k:['伊豆高原','大室山','城ヶ崎'],lat:34.9167,lon:139.1333},
-  {k:['修善寺'],lat:34.9667,lon:138.9333},
+  {k:['修善寺','伊豆市','大平','柏久保','加殿'],lat:34.9667,lon:138.9333},
   {k:['湯ケ島','湯ヶ島','天城','浄蓮'],lat:34.8833,lon:138.9167},
   {k:['伊豆の国','長岡','伊豆長岡','韮山'],lat:35.0333,lon:138.9333},
   {k:['下田'],lat:34.6776,lon:138.9453},
@@ -690,6 +698,14 @@ function render(){
     div.onclick=function(){openDet(i);};
     var mu=buildMapUrl(s);
     var mHtml=mu?'<a class="mlink" href="'+mu+'" target="_blank" onclick="event.stopPropagation()">🗺️</a>':'';
+    // 寝るカテゴリ：GoogleマップURLからWEBサイトへのリンクボタン
+    var webHtml='';
+    if(s.cat==='寝る'&&s.u&&s.u.indexOf('http')===0){
+      // GoogleマップURLを宿の検索URLに変換
+      var sname=encodeURIComponent(s.n);
+      var webUrl='https://www.google.com/search?q='+sname+'&btnI=1';
+      webHtml='<a class="weblink" href="'+webUrl+'" target="_blank" onclick="event.stopPropagation()">WEB情報</a>';
+    }
     var bud=s.b?s.b.replace('前後','').replace('程度','').replace('食べた買った分だけ','').substring(0,20):'';
     var pk=s.p;
     var pkTag=(pk==='あり'||pk==='あり（有料）'||pk==='あり（無料）')?'<span class="tag park">🚗 '+esc(pk)+'</span>':'';
@@ -703,7 +719,7 @@ function render(){
       '<div class="cname">'+esc(s.n)+'</div>'+
       (addrShort?'<div style="font-size:10px;color:var(--lmuted);margin-top:2px;padding-right:40px;">📍'+esc(addrShort)+'</div>':'')+
       '<div class="cdesc">'+esc(s.d)+'</div>'+
-      '<div class="cfoot">'+(bud?'<span class="tag bud">💰 '+esc(bud)+'</span>':'')+pkTag+distTag+'</div>'+mHtml;
+      '<div class="cfoot">'+(bud?'<span class="tag bud">💰 '+esc(bud)+'</span>':'')+pkTag+distTag+'</div>'+mHtml+webHtml;
     frag.appendChild(div);
   });
   le.innerHTML='';le.appendChild(frag);
