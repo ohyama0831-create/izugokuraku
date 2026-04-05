@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 背景：鉄紺 -->
+  <rect width="512" height="512" rx="112" fill="#0f1e3a"/>
+
+  <!-- 湯気 左：白い太い曲線 -->
+  <path d="M176 380 C170 348, 196 320, 190 288 C184 256, 158 236, 164 204 C170 172, 192 156, 186 124"
+    fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 湯気 中央：白い太い曲線 -->
+  <path d="M256 388 C250 356, 276 328, 270 296 C264 264, 238 244, 244 212 C250 180, 272 164, 266 132"
+    fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 湯気 右：白い太い曲線 -->
+  <path d="M336 380 C330 348, 356 320, 350 288 C344 256, 318 236, 324 204 C330 172, 352 156, 346 124"
+    fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- コーラルピンクのドット（中央・根元アクセント） -->
+  <circle cx="256" cy="408" r="22" fill="#e8635a"/>
+  <!-- 左右の小ドット -->
+  <circle cx="178" cy="402" r="15" fill="#e8635a" opacity="0.75"/>
+  <circle cx="334" cy="402" r="15" fill="#e8635a" opacity="0.75"/>
+</svg>
