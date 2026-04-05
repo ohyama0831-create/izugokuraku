@@ -70,6 +70,58 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
 #wave{flex-shrink:0;height:38px;background:var(--cream);margin-top:-2px;clip-path:ellipse(55% 100% at 50% 100%);}
 #area-section{flex:1;overflow-y:auto;padding:8px 16px 24px;
   padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+
+/* ── 伊豆の最新情報ボタン ── */
+#news-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:0 0 12px;padding:12px 16px;
+  background:linear-gradient(135deg,#0d1b3e 0%,#1e3a6e 100%);
+  border-radius:var(--r);cursor:pointer;
+  box-shadow:0 3px 14px rgba(13,27,62,0.4);
+  border:1px solid rgba(255,255,255,0.1);}
+#news-btn:active{opacity:0.82;}
+.news-btn-left{display:flex;align-items:center;gap:10px;}
+.news-btn-icon{font-size:22px;}
+.news-btn-label{font-size:14px;font-weight:800;color:#fff;letter-spacing:0.04em;}
+.news-btn-sub{font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.news-btn-arr{font-size:20px;color:rgba(255,255,255,0.4);transition:transform 0.2s;}
+.news-btn-arr.open{transform:rotate(90deg);}
+
+/* ── イベントカードリスト ── */
+#news-panel{display:none;margin:0 0 14px;}
+#news-panel.show{display:block;}
+.ncard{
+  background:var(--white);border-radius:var(--r);
+  border:1px solid var(--cream3);margin-bottom:10px;
+  overflow:hidden;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,0.07);
+  transition:transform 0.15s;}
+.ncard:last-child{margin-bottom:0;}
+.ncard:active{transform:scale(0.98);}
+.ncard-accent{height:4px;}
+.ncard-body{padding:13px 14px 12px;}
+.ncard-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.ncard-tag{display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;font-weight:800;padding:3px 9px;border-radius:10px;
+  flex-shrink:0;margin-top:2px;}
+.ncard-name{font-size:15px;font-weight:800;color:var(--text);line-height:1.35;flex:1;}
+.ncard-desc{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ncard-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+.ncard-info{display:flex;flex-direction:column;gap:2px;}
+.ncard-date{font-size:11px;color:var(--muted);}
+.ncard-place{font-size:10px;color:var(--lmuted);}
+.ncard-actions{display:flex;gap:7px;}
+.ncard-web{
+  display:flex;align-items:center;gap:4px;padding:5px 11px;
+  border-radius:10px;background:var(--cream2);border:1px solid var(--cream3);
+  font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;}
+.ncard-map{
+  display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:10px;
+  background:#e6f4ec;border:1px solid rgba(30,104,64,0.25);
+  font-size:16px;text-decoration:none;}
+.ncard-map:active,.ncard-web:active{opacity:0.7;}
 #area-label{text-align:center;font-size:14px;color:var(--muted);letter-spacing:0.12em;margin-bottom:14px;font-family:"Noto Serif JP",serif;}
 #area-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:360px;margin:0 auto;}
 .acard{background:var(--white);border-radius:var(--r);padding:18px 16px 16px;text-align:center;
@@ -189,9 +241,22 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
     <div id="hero-sub">IZU GOKURAKU &mdash; 極上の伊豆旅</div>
     <div id="hero-img-wrap"><img id="hero-img" src="" alt="伊豆極楽"></div>
     <div id="hero-season"></div>
+    <div id="news-link-wrap" style="margin-top:14px;position:relative;z-index:1;">
+      <div id="news-inline-btn" onclick="toggleNews()" style="
+        display:inline-flex;align-items:center;gap:6px;
+        padding:7px 18px;border-radius:20px;
+        background:rgba(255,255,255,0.15);
+        border:1.5px solid rgba(232,200,122,0.5);
+        font-size:13px;font-weight:800;color:var(--gold3);
+        cursor:pointer;letter-spacing:0.06em;">
+        📰 伊豆の最新情報
+        <span id="news-arr" style="font-size:12px;transition:transform 0.2s;">›</span>
+      </div>
+    </div>
   </div>
   <div id="wave"></div>
   <div id="area-section">
+    <div id="news-panel"></div>
     <div id="area-label">どのエリアへ行きますか？</div>
     <div id="area-grid"></div>
   </div>
@@ -673,6 +738,132 @@ function swipe(id,fn){
   el.addEventListener('touchstart',function(e){tx0=e.touches[0].clientX;},{passive:true});
   el.addEventListener('touchend',function(e){if(e.changedTouches[0].clientX-tx0>70&&tx0<70)fn();},{passive:true});
 }
+// ============================
+// 伊豆の最新情報
+// ============================
+var NEWS_DATA = {
+  4:[
+    {
+      color:'#e84c8b',
+      tag:'🌸 花見',tagCss:'background:#fce8f0;color:#c04080;',
+      name:'伊豆高原さくらの里 桜まつり',
+      desc:'40種1,000本の桜が咲き誇る絶景スポット。伊東最大の花見イベント、見頃継続中！',
+      date:'📅 〜4月中旬（見頃継続中）',
+      place:'📍 静岡県伊東市富戸1317-13',
+      addr:'静岡県伊東市富戸1317-13',
+      url:'https://itospa.com/spot/detail_50030.html',
+    },
+    {
+      color:'#3a7bd5',
+      tag:'🎨 アート',tagCss:'background:#e8f0fc;color:#2050c0;',
+      name:'伊豆高原五月祭（4/29〜開幕）',
+      desc:'伊豆最大のアートフェス。100以上のギャラリー・カフェ・アトリエが会場に。今から計画を。',
+      date:'📅 4月29日(水・祝)〜5月31日(日)',
+      place:'📍 静岡県伊東市 伊豆高原エリア一帯',
+      addr:'静岡県伊東市八幡野1151',
+      url:'https://izukougen-gogatsusai.art/',
+    },
+    {
+      color:'#e85d20',
+      tag:'🎉 お祭り',tagCss:'background:#fff0e8;color:#c04010;',
+      name:'松崎さくら祭り・夜桜ライトアップ',
+      desc:'桜並木のライトアップ＋フラメンコギターライブ。桜葉おしるこ無料サービスが人気。',
+      date:'📅 4月4日(土)〜4月11日(土)',
+      place:'📍 静岡県賀茂郡松崎町 道の駅花の三聖苑',
+      addr:'静岡県賀茂郡松崎町松崎',
+      url:'https://b-izu.com/event/post-26019/',
+    },
+  ],
+  5:[
+    {
+      color:'#3a7bd5',
+      tag:'🎨 アート',tagCss:'background:#e8f0fc;color:#2050c0;',
+      name:'伊豆高原五月祭（開催中）',
+      desc:'100以上の会場でギャラリー・体験イベント開催中。伊豆の春の最大アートフェス！',
+      date:'📅 4月29日(水・祝)〜5月31日(日)',
+      place:'📍 静岡県伊東市 伊豆高原エリア一帯',
+      addr:'静岡県伊東市八幡野1151',
+      url:'https://izukougen-gogatsusai.art/',
+    },
+    {
+      color:'#e85d20',
+      tag:'🎉 お祭り',tagCss:'background:#fff0e8;color:#c04010;',
+      name:'黒船祭（下田市最大イベント）',
+      desc:'ペリー来航を記念した国際交流イベント。海上花火・米海軍パレード・フラショーが豪華！',
+      date:'📅 5月16日(金)〜18日(日)',
+      place:'📍 静岡県下田市 下田港周辺',
+      addr:'静岡県下田市',
+      url:'https://www.shimoda-city.info/kurohune/',
+    },
+    {
+      color:'#1e9e5a',
+      tag:'🌺 自然',tagCss:'background:#e6f4ec;color:#1e6840;',
+      name:'姫の沢公園 つつじ・こいのぼりまつり',
+      desc:'60,000株のツツジが咲き誇る。150匹のこいのぼり＋ミニ電車体験が家族に大人気！',
+      date:'📅 4月18日(土)〜5月6日(水)',
+      place:'📍 静岡県熱海市熱海1993',
+      addr:'静岡県熱海市熱海1993',
+      url:'https://www.city.atami.lg.jp/',
+    },
+  ],
+};
+
+// 月別デフォルト（データがない月は4月を表示）
+var newsOpen = false;
+
+function toggleNews(){
+  newsOpen = !newsOpen;
+  var panel = document.getElementById('news-panel');
+  var arr   = document.getElementById('news-arr');
+  if(newsOpen){
+    buildNewsPanel();
+    panel.classList.add('show');
+    arr.style.transform = 'rotate(90deg)';
+    // パネルにスクロール
+    setTimeout(function(){
+      panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },100);
+  } else {
+    panel.classList.remove('show');
+    arr.style.transform = '';
+  }
+}
+
+function buildNewsPanel(){
+  var m = new Date().getMonth()+1;
+  var items = NEWS_DATA[m] || NEWS_DATA[4];
+  var html = '';
+  items.forEach(function(ev){
+    var mapUrl = 'https://maps.google.com/maps?daddr='+encodeURIComponent(ev.addr)+'&dirflg=d';
+    html +=
+      '<div class="ncard" onclick="openNewsUrl(''+ev.url+'')">'+
+        '<div class="ncard-accent" style="background:'+ev.color+'"></div>'+
+        '<div class="ncard-body">'+
+          '<div class="ncard-header">'+
+            '<div class="ncard-name">'+ev.name+'</div>'+
+            '<div class="ncard-tag" style="'+ev.tagCss+'">'+ev.tag+'</div>'+
+          '</div>'+
+          '<div class="ncard-desc">'+ev.desc+'</div>'+
+          '<div class="ncard-footer">'+
+            '<div class="ncard-info">'+
+              '<div class="ncard-date">'+ev.date+'</div>'+
+              '<div class="ncard-place">'+ev.place+'</div>'+
+            '</div>'+
+            '<div class="ncard-actions">'+
+              '<a class="ncard-web" href="'+ev.url+'" target="_blank" onclick="event.stopPropagation()">🌐 詳細</a>'+
+              '<a class="ncard-map" href="'+mapUrl+'" target="_blank" onclick="event.stopPropagation()">🗺️</a>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+  });
+  document.getElementById('news-panel').innerHTML = html;
+}
+
+function openNewsUrl(url){
+  window.open(url,'_blank');
+}
+
 swipe('subarea-screen',function(){goBack('top');});
 swipe('cat-screen',function(){catBack();});
 swipe('det-screen',function(){goBack('cat-screen');});
