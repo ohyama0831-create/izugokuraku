@@ -41,6 +41,12 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
   background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
   color:var(--gold3);font-size:20px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;flex-shrink:0;position:relative;z-index:1;}
+.top-btn{height:32px;padding:0 12px;border-radius:10px;
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+  color:var(--gold3);font-size:11px;font-weight:700;letter-spacing:0.05em;
+  display:flex;align-items:center;gap:4px;
+  cursor:pointer;flex-shrink:0;position:relative;z-index:1;}
+.top-btn:active{opacity:0.7;}
 .hdr-text{flex:1;position:relative;z-index:1;}
 .hdr-title{font-size:19px;font-weight:800;color:var(--gold2);font-family:"Noto Serif JP",serif;letter-spacing:0.04em;}
 .hdr-sub{font-size:11px;color:rgba(232,200,122,0.6);margin-top:2px;}
@@ -199,6 +205,7 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
       <div class="hdr-title" id="sub-title">—</div>
       <div class="hdr-sub">エリアを選んでください</div>
     </div>
+    <div class="top-btn" onclick="goBack('top')">🏠 トップ</div>
   </div>
   <div id="subarea-list"></div>
 </div>
@@ -211,6 +218,7 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
       <div class="hdr-title" id="cat-title">—</div>
       <div class="hdr-sub" id="cat-sub">—</div>
     </div>
+    <div class="top-btn" onclick="goBack('top')">🏠 トップ</div>
   </div>
   <div id="ctabs">
     <div class="ctab" data-c="食う" onclick="setCat('食う')"><span class="ci">🍣</span>食う</div>
@@ -241,6 +249,7 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
   <div class="hdr">
     <div class="back-btn" onclick="goBack('cat-screen')">&#8592;</div>
     <div class="hdr-text"><div class="hdr-title" id="det-name">—</div></div>
+    <div class="top-btn" onclick="goBack('top')">🏠 トップ</div>
   </div>
   <div id="det-body">
     <div class="dsec"><div class="dlbl">📝 説明</div><div id="d-desc" class="dval">—</div></div>
@@ -320,6 +329,17 @@ function goBack(target){
   if(target!=='cat-screen'){
     document.getElementById('srch-inp').value='';
     document.getElementById('srch-wrap').classList.remove('show');
+  }
+  // トップに戻る時はフィルターバーも非表示
+  if(target==='top'){
+    var fb=document.getElementById('filter-bar');
+    var nb=document.getElementById('near-btn');
+    var ns=document.getElementById('near-status');
+    if(fb) fb.classList.remove('show');
+    if(nb) nb.style.display='none';
+    if(ns) ns.classList.remove('show');
+    curFilter='';
+    nearMode=false;
   }
 }
 function catBack(){
