@@ -207,18 +207,23 @@ html,body{height:100%;background:var(--cream);color:var(--text);font-family:"Hir
 .tag.bud{color:#7a4a10;border-color:rgba(200,168,75,0.4);background:#fdf5e0;}
 .tag.park{color:var(--play);border-color:rgba(30,104,64,0.3);background:#e6f4ec;}
 .mlink{position:absolute;right:10px;top:50%;transform:translateY(-50%);
-  width:33px;height:33px;border-radius:9px;background:#e6f4ec;
+  width:32px;height:32px;border-radius:9px;background:#e6f4ec;
   border:1px solid rgba(30,104,64,0.3);color:var(--play);font-size:15px;
-  display:flex;align-items:center;justify-content:center;text-decoration:none;}
-.mlink:active{background:#cde5d8;}
-.weblink{position:absolute;right:48px;top:50%;transform:translateY(-50%);
-  height:28px;padding:0 9px;border-radius:8px;
-  background:#eef2ff;border:1px solid rgba(32,80,192,0.22);
-  color:#2050c0;font-size:10px;font-weight:800;
   display:flex;align-items:center;justify-content:center;
-  text-decoration:none;white-space:nowrap;}
+  text-decoration:none;flex-shrink:0;}
+.mlink:active{background:#cde5d8;}
+/* cname-row内のmlinkは通常フロー（absolute解除）*/
+.card-btns .mlink{position:static;transform:none;width:32px;height:32px;}
+.weblink{height:32px;padding:0 10px;border-radius:9px;
+  background:#eef2ff;border:1px solid rgba(32,80,192,0.22);
+  color:#2050c0;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;white-space:nowrap;flex-shrink:0;}
 .weblink:active{opacity:0.7;}
-.card[data-c="寝る"] .cname{padding-right:125px;}
+/* 寝るカード：施設名+ボタン横並び行 */
+.cname-row{display:flex;align-items:center;gap:7px;margin-bottom:0;}
+.cname-row .cname{flex:1;padding-right:0;}
+.cname-row .card-btns{display:flex;gap:6px;align-items:center;flex-shrink:0;}
 #empty{display:none;flex-direction:column;align-items:center;padding:50px 20px;text-align:center;}
 #empty.show{display:flex;}
 .eico{font-size:44px;margin-bottom:12px;}
@@ -720,11 +725,22 @@ function render(){
       (s._dist<1?(s._dist*1000).toFixed(0)+'m':s._dist.toFixed(1)+'km')+'</span>':'';
     // 住所（短縮）
     var addrShort=s.a?s.a.replace(/静岡県/,'').replace(/賀茂郡/,'').substring(0,18):'';
+    // 寝るカテゴリは施設名の横にWEB情報・地図ボタンを並べる
+    var nameHtml;
+    if(s.cat==='寝る'){
+      nameHtml='<div class="cname-row">'+
+        '<div class="cname" style="padding-right:0;">'+esc(s.n)+'</div>'+
+        '<div class="card-btns">'+webHtml+mHtml+'</div>'+
+        '</div>';
+    } else {
+      nameHtml='<div class="cname">'+esc(s.n)+'</div>';
+    }
     div.innerHTML='<div class="cbar"></div>'+
-      '<div class="cname">'+esc(s.n)+'</div>'+
-      (addrShort?'<div style="font-size:10px;color:var(--lmuted);margin-top:2px;padding-right:40px;">📍'+esc(addrShort)+'</div>':'')+
+      nameHtml+
+      (addrShort?'<div style="font-size:10px;color:var(--lmuted);margin-top:2px;">📍'+esc(addrShort)+'</div>':'')+
       '<div class="cdesc">'+esc(s.d)+'</div>'+
-      '<div class="cfoot">'+(bud?'<span class="tag bud">💰 '+esc(bud)+'</span>':'')+pkTag+distTag+'</div>'+mHtml+webHtml;
+      '<div class="cfoot">'+(bud?'<span class="tag bud">💰 '+esc(bud)+'</span>':'')+pkTag+distTag+'</div>'+
+      (s.cat!=='寝る'?mHtml:'');
     frag.appendChild(div);
   });
   le.innerHTML='';le.appendChild(frag);
