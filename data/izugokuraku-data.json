@@ -6954,6 +6954,41 @@
         "addr": "静岡県賀茂郡西伊豆町仁科",
         "url": "https://www.nishiizu-kankou.com/event/sunsethanabi"
       }
+    ],
+    "10": [
+      {
+        "color": "#e85d20",
+        "tag": "🔥 伝統花火",
+        "tagCss": "background:#fff0e8;color:#c04010;",
+        "name": "下田・手筒花火",
+        "desc": "河内諏訪神社例大祭で披露される、勇壮な手筒花火。火の粉を浴びながら筒を抱える迫力ある伝統行事です。",
+        "date": "📅 2026年10月10日(土) 19:00〜（手筒花火 19:30〜）",
+        "place": "📍 JA下田北支店付近",
+        "addr": "静岡県下田市河内",
+        "url": "https://www.shimoda-city.info/tezutsu"
+      },
+      {
+        "color": "#8a4bd8",
+        "tag": "🎃 ハロウィン",
+        "tagCss": "background:#f0e8ff;color:#6b32b2;",
+        "name": "BOO!PARK NISHIIZU",
+        "desc": "堂ヶ島を舞台に、仮装や遊びを楽しめる体験型ハロウィンイベント。詳しい時間や内容は公式サイトでご確認ください。",
+        "date": "📅 2026年10月24日(土)",
+        "place": "📍 堂ヶ島公園",
+        "addr": "静岡県賀茂郡西伊豆町仁科2910-2",
+        "url": "https://www.nishiizu-kankou.com/event/boopark-nishiizu"
+      },
+      {
+        "color": "#1e9e5a",
+        "tag": "🐟 海の幸",
+        "tagCss": "background:#e6f4ec;color:#1e6840;",
+        "name": "第16回 熱海おさかなフェスティバル",
+        "desc": "浜焼きや飲食店、マルシェが並ぶ熱海の海の幸イベント。海況が良ければ特別遊覧船も楽しめます。",
+        "date": "📅 2026年10月31日(土) 10:00〜17:00・11月1日(日) 10:00〜15:00",
+        "place": "📍 親水公園イベント広場",
+        "addr": "静岡県熱海市渚町2018-8",
+        "url": "https://www.ataminews.gr.jp/event/198"
+      }
     ]
   }
 }
